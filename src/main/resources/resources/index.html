@@ -5,7 +5,7 @@
     <title>登录</title>
 </head>
 <body>
-<h1>欢迎登录！</h1>
+<h1>表单登录！</h1>
 <form action="/authentication/form" method="post">
     <table>
         <tr>
@@ -31,9 +31,28 @@
         </tr>
 
     </table>
-
-
 </form>
+
+<h1>短信验证码登录！</h1>
+<form action="/authentication/sms" method="post">
+    <table>
+        <tr>
+            <td>PhoneNumber:</td>
+            <td><input type="text" name="mobile" value="17816875433"></td>
+        </tr>
+        <tr>
+            <td>短信验证码：</td>
+            <td>
+                <input type="text" name="imageCode">
+                <a href="/image/sms?mobile=17816875433">发送验证码</a>
+            </td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="提交"></td>
+        </tr>
+    </table>
+</form>
+
 
 </body>
 </html>

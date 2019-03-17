@@ -1,4 +1,4 @@
-package com.spring.security.securityproject.service;
+package com.spring.security.securityproject.service.validateCode;
 
 import com.spring.security.securityproject.pojo.ImageCode;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
@@ -23,7 +23,7 @@ public class MyImageCodeGenerator implements ValidateCodeGenerator {
     }
 
     @Override
-    public ImageCode generateImage(HttpServletRequest request) {
+    public ImageCode generateCode(HttpServletRequest request) {
         final String word = "0000111122223333444455556666777788889999" +
                 "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
 

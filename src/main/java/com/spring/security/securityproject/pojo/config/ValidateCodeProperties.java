@@ -1,5 +1,6 @@
 package com.spring.security.securityproject.pojo.config;
 
+import com.spring.security.securityproject.pojo.ValidateCode;
 import lombok.Data;
 
 /**
@@ -9,6 +10,8 @@ import lombok.Data;
  */
 @Data
 public class ValidateCodeProperties {
+
+    private SmsCodeProperties sms = new SmsCodeProperties();
 
     private ImageCodeProperties image = new ImageCodeProperties();
 

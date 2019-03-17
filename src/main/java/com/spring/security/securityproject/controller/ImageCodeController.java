@@ -1,8 +1,13 @@
 package com.spring.security.securityproject.controller;
 
 import com.spring.security.securityproject.pojo.ImageCode;
-import com.spring.security.securityproject.service.ValidateCodeGenerator;
+import com.spring.security.securityproject.pojo.ValidateCode;
+import com.spring.security.securityproject.service.validateCode.MyImageCodeGenerator;
+import com.spring.security.securityproject.service.validateCode.MySmsCodeGenerator;
+import com.spring.security.securityproject.service.validateCode.sms.SmsCodeSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +28,11 @@ public class ImageCodeController {
     public static final String SESSION_KEY = "SESSION_KEY_IMAGE_CODE";
 
     @Autowired
-    private ValidateCodeGenerator codeGenerator;
+    private MyImageCodeGenerator imageCodeGenerator;
+    @Autowired
+    private MySmsCodeGenerator smsCodeGenerator;
+    @Autowired
+    private SmsCodeSender sender;
 
     /***
      * 生成验证码有三个步骤：
@@ -37,7 +46,7 @@ public class ImageCodeController {
     @GetMapping //注意：这个请求的 URL 要在配置类中放行
     public void getImage(HttpServletRequest request, HttpServletResponse response) {
 
-        ImageCode imageCode = codeGenerator.generateImage(request);
+        ImageCode imageCode = imageCodeGenerator.generateCode(request);
 
         request.getSession().setAttribute(SESSION_KEY, imageCode);
         //使用 Spring框架 的工具类操作session
@@ -48,6 +57,24 @@ public class ImageCodeController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    @GetMapping("/sms") //注意：这个请求的 URL 要在配置类中放行
+    public void getSms(HttpServletRequest request, HttpServletResponse response) throws ServletRequestBindingException {
+
+        ValidateCode validateCode = smsCodeGenerator.generateCode(request);
+
+        request.getSession().setAttribute(SESSION_KEY, validateCode);
+        //使用 Spring框架 的工具类操作session
+        //需要引入 social 依赖
+
+        //必须要从session中取出值，否则抛异常
+        String mobile = ServletRequestUtils.getRequiredStringParameter(request, "mobile");
+
+        sender.send(mobile, validateCode.getCode());
+
     }
 
 }

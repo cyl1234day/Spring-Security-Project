@@ -99,6 +99,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
             .loginPage("/index.html")
 //            .loginPage("/login/authentication")//如果需要身份认证，跳转到url的Controller方法
             .loginProcessingUrl("/authentication/form")//这个url的请求会传给过滤器进行用户校验
+            .loginProcessingUrl("/authentication/sms")
             .and()
             .rememberMe()//开始配置 RememberMe 功能
             .tokenRepository(persistentTokenRepository())//配置数据源
@@ -107,7 +108,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()//需要授权登录
             .antMatchers("/index.html", "/login/authentication", securityProperties.getBrowser().getLoginPage(),
-                        "/image").permitAll()//这个url的请求放行
+                        "/image", "/authentication/sms", "/image/sms").permitAll()//这个url的请求放行
             .anyRequest()//所有请求
             .authenticated()//都要身份认证
             .and()

@@ -3,6 +3,7 @@ package com.spring.security.securityproject.filter;
 import com.spring.security.securityproject.controller.ImageCodeController;
 import com.spring.security.securityproject.exception.ValidateCodeException;
 import com.spring.security.securityproject.pojo.ImageCode;
+import com.spring.security.securityproject.pojo.ValidateCode;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +57,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
             }
         }
         urlSet.add("/authentication/form");
+        urlSet.add("/authentication/sms");
     }
 
 //    public void setFailureHandler(AuthenticationFailureHandler failureHandler) {
@@ -107,23 +109,23 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
      * @throws ValidateCodeException
      */
     private void checkImageCode(HttpServletRequest request) throws ValidateCodeException {
-        ImageCode imageCode = (ImageCode) request.getSession().getAttribute(ImageCodeController.SESSION_KEY);
+        ValidateCode validateCode = (ValidateCode) request.getSession().getAttribute(ImageCodeController.SESSION_KEY);
 
 //        使用工具类获取request中的参数值
 //        String imageCode = ServletRequestUtils.getStringParameter(request, "imageCode");
 
-        if(imageCode == null) {
+        if(validateCode == null) {
             throw new ValidateCodeException("验证码不存在！");
         }
         if(StringUtils.isEmpty(request.getParameter("imageCode"))) {
             throw new ValidateCodeException("验证码为空！");
         }
-        if(!imageCode.isValid()) {
+        if(!validateCode.isValid()) {
             //要把过期的验证码从Session域中删掉
             request.getSession().removeAttribute(ImageCodeController.SESSION_KEY);
             throw new ValidateCodeException("验证码过期！");
         }
-        if(!StringUtils.equalsIgnoreCase(imageCode.getCode(), request.getParameter("imageCode"))) {
+        if(!StringUtils.equalsIgnoreCase(validateCode.getCode(), request.getParameter("imageCode"))) {
             //要把错误的验证码从Session域中删掉
             request.getSession().removeAttribute(ImageCodeController.SESSION_KEY);
             throw new ValidateCodeException("验证码错误！");

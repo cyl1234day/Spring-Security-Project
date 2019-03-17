@@ -1,6 +1,6 @@
-package com.spring.security.securityproject.service;
+package com.spring.security.securityproject.service.validateCode;
 
-import com.spring.security.securityproject.pojo.ImageCode;
+import com.spring.security.securityproject.pojo.ValidateCode;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,6 +11,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface ValidateCodeGenerator {
 
-    ImageCode generateImage(HttpServletRequest request);
+    ValidateCode generateCode(HttpServletRequest request);
 
 }
