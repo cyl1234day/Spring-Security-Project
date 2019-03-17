@@ -8,10 +8,11 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 自定义的验证码生成逻辑
  * @author chengyl
  * @create 2019-03-17-14:17
  */
-@Component("imageCodeGenerator")
+//@Component("imageCodeGenerator")
 public class DemoImageCodeGenerator implements ValidateCodeGenerator {
     @Override
     public ImageCode generateImage(HttpServletRequest request) {

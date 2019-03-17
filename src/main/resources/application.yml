@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost/xc_course?useUnicode=true&serverTimezone=Hongkong&characterEncoding=utf-8
+    url: jdbc:mysql://localhost/spring_security?useUnicode=true&serverTimezone=Hongkong&characterEncoding=utf-8
     username: root
     password: 123456
   main:
@@ -15,8 +15,9 @@ imooc:
     browser:
       loginPage: /index.html
       loginType: JSON
-    code:
-      image:
-        width: 200
-        length: 6
-        url: /user,/user/*
+#      remeberMeSeconds: 36000
+#    code:
+#      image:
+#        width: 200
+#        length: 6
+#        url: /user,/user/*

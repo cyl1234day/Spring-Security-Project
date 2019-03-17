@@ -1,25 +1,16 @@
 package com.spring.security.securityproject.controller;
 
 import com.spring.security.securityproject.pojo.ImageCode;
-import com.spring.security.securityproject.pojo.config.SecurityProperties;
-import com.spring.security.securityproject.service.MyImageCodeGenerator;
 import com.spring.security.securityproject.service.ValidateCodeGenerator;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.session.web.http.HttpSessionStrategy;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Random;
 
 /**
  * @author chengyl
@@ -58,7 +49,5 @@ public class ImageCodeController {
             e.printStackTrace();
         }
     }
-
-
 
 }

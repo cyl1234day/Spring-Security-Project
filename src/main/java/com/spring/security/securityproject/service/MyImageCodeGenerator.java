@@ -2,8 +2,6 @@ package com.spring.security.securityproject.service;
 
 import com.spring.security.securityproject.pojo.ImageCode;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.ServletRequestUtils;
 
 import javax.servlet.http.HttpServletRequest;

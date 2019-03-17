@@ -50,8 +50,10 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
     @Override
     public void afterPropertiesSet(){
         String[] urls = StringUtils.split(securityProperties.getCode().getImage().getUrl(), ",");
-        for(String url : urls) {
-            urlSet.add(url);
+        if(urls != null) {
+            for(String url : urls) {
+                urlSet.add(url);
+            }
         }
         urlSet.add("/authentication/form");
     }
