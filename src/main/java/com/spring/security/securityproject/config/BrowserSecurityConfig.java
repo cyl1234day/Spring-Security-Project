@@ -1,5 +1,6 @@
 package com.spring.security.securityproject.config;
 
+import com.spring.security.securityproject.filter.SmsCodeFilter;
 import com.spring.security.securityproject.filter.ValidateCodeFilter;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,11 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private ValidateCodeFilter validateCodeFilter;
     @Autowired
+    private SmsCodeFilter smsCodeFilter;
+    @Autowired
     private DataSource dataSource;
+    @Autowired
+    private SmsCodeAuthenticationSecurityConfig smsConfig;
 
 
 //    @Override
@@ -92,14 +97,15 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 //        validateCodeFilter.setFailureHandler(failureHandler);
 
         //把自定义的验证码校验过滤器加到 UsernamePasswordAuthenticationFilter 之前
-        http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+        http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)//图形验证码校验过滤器
+            .addFilterBefore(smsCodeFilter, UsernamePasswordAuthenticationFilter.class)//短信验证码校验过滤器
              .formLogin()//表单登录
             .successHandler(successHandler)//登录成功后的处理实现类
             .failureHandler(failureHandler)//登录失败后的处理实现类
             .loginPage("/index.html")
 //            .loginPage("/login/authentication")//如果需要身份认证，跳转到url的Controller方法
             .loginProcessingUrl("/authentication/form")//这个url的请求会传给过滤器进行用户校验
-            .loginProcessingUrl("/authentication/sms")
+//            .loginProcessingUrl("/authentication/sms")
             .and()
             .rememberMe()//开始配置 RememberMe 功能
             .tokenRepository(persistentTokenRepository())//配置数据源
@@ -108,10 +114,11 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()//需要授权登录
             .antMatchers("/index.html", "/login/authentication", securityProperties.getBrowser().getLoginPage(),
-                        "/code/*", "/authentication/sms").permitAll()//这个url的请求放行
+                        "/code/*", "/authentication/sms","/authentication/form").permitAll()//这个url的请求放行
             .anyRequest()//所有请求
             .authenticated()//都要身份认证
             .and()
-            .csrf().disable();//关闭csrf
+            .csrf().disable()//关闭csrf
+            .apply(smsConfig);//加入SMS配置
     }
 }

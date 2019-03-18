@@ -30,7 +30,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean {
+public class SmsCodeFilter extends OncePerRequestFilter implements InitializingBean {
 
     @Autowired
     private AuthenticationFailureHandler failureHandler;
@@ -49,13 +49,13 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
      */
     @Override
     public void afterPropertiesSet(){
-        String[] urls = StringUtils.split(securityProperties.getCode().getImage().getUrl(), ",");
+        String[] urls = StringUtils.split(securityProperties.getCode().getSms().getUrl(), ",");
         if(urls != null) {
             for(String url : urls) {
                 urlSet.add(url);
             }
         }
-        urlSet.add("/authentication/form");
+        urlSet.add("/authentication/sms");
     }
 
 
@@ -80,7 +80,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
             log.info("图形验证码校验");
             System.out.println(failureHandler);
             try {
-                checkImageCode(request);
+                checkSmsCode(request);
             } catch (ValidateCodeException e) {
                 //使用自定义的登录失败处理类来处理错误信息
                 failureHandler.onAuthenticationFailure(request, response, e);
@@ -99,8 +99,8 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
      * @param request
      * @throws ValidateCodeException
      */
-    private void checkImageCode(HttpServletRequest request) throws ValidateCodeException {
-        ValidateCode validateCode = (ValidateCode) request.getSession().getAttribute("SESSION_KEY_FOR_CODE_IMAGE");
+    private void checkSmsCode(HttpServletRequest request) throws ValidateCodeException {
+        ValidateCode validateCode = (ValidateCode) request.getSession().getAttribute("SESSION_KEY_FOR_CODE_SMS");
 
 //        使用工具类获取request中的参数值
 //        String imageCode = ServletRequestUtils.getStringParameter(request, "imageCode");
@@ -113,16 +113,16 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         }
         if(!validateCode.isValid()) {
             //要把过期的验证码从Session域中删掉
-            request.getSession().removeAttribute("SESSION_KEY_FOR_CODE_IMAGE");
+            request.getSession().removeAttribute("SESSION_KEY_FOR_CODE_SMS");
             throw new ValidateCodeException("验证码过期！");
         }
         if(!StringUtils.equalsIgnoreCase(validateCode.getCode(), request.getParameter("imageCode"))) {
             //要把错误的验证码从Session域中删掉
-            request.getSession().removeAttribute("SESSION_KEY_FOR_CODE_IMAGE");
+            request.getSession().removeAttribute("SESSION_KEY_FOR_CODE_SMS");
             throw new ValidateCodeException("验证码错误！");
         }
         //使用过的验证码从Session域中删掉
-        request.getSession().removeAttribute("SESSION_KEY_FOR_CODE_IMAGE");
+        request.getSession().removeAttribute("SESSION_KEY_FOR_CODE_SMS");
     }
 
 
