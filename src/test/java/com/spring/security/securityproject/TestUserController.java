@@ -1,11 +1,8 @@
 package com.spring.security.securityproject;
 
-import com.jayway.jsonpath.JsonPath;
-import com.spring.security.securityproject.controller.ImageCodeController;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.results.ResultMatchers;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -68,12 +65,6 @@ public class TestUserController {
         System.out.println(securityProperties.getBrowser().getLoginPage());
     }
 
-
-    @Test
-    public void test05() throws Exception {
-        ImageCodeController i = new ImageCodeController();
-//        i.testImage();
-    }
 
 
 }

@@ -1,8 +1,7 @@
 package com.spring.security.securityproject.filter;
 
-import com.spring.security.securityproject.controller.ImageCodeController;
+import com.spring.security.securityproject.controller.ValidateCodeController;
 import com.spring.security.securityproject.exception.ValidateCodeException;
-import com.spring.security.securityproject.pojo.ImageCode;
 import com.spring.security.securityproject.pojo.ValidateCode;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -109,7 +108,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
      * @throws ValidateCodeException
      */
     private void checkImageCode(HttpServletRequest request) throws ValidateCodeException {
-        ValidateCode validateCode = (ValidateCode) request.getSession().getAttribute(ImageCodeController.SESSION_KEY);
+        ValidateCode validateCode = (ValidateCode) request.getSession().getAttribute(ValidateCodeController.SESSION_KEY);
 
 //        使用工具类获取request中的参数值
 //        String imageCode = ServletRequestUtils.getStringParameter(request, "imageCode");
@@ -122,16 +121,16 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         }
         if(!validateCode.isValid()) {
             //要把过期的验证码从Session域中删掉
-            request.getSession().removeAttribute(ImageCodeController.SESSION_KEY);
+            request.getSession().removeAttribute(ValidateCodeController.SESSION_KEY);
             throw new ValidateCodeException("验证码过期！");
         }
         if(!StringUtils.equalsIgnoreCase(validateCode.getCode(), request.getParameter("imageCode"))) {
             //要把错误的验证码从Session域中删掉
-            request.getSession().removeAttribute(ImageCodeController.SESSION_KEY);
+            request.getSession().removeAttribute(ValidateCodeController.SESSION_KEY);
             throw new ValidateCodeException("验证码错误！");
         }
         //使用过的验证码从Session域中删掉
-        request.getSession().removeAttribute(ImageCodeController.SESSION_KEY);
+        request.getSession().removeAttribute(ValidateCodeController.SESSION_KEY);
     }
 
 
