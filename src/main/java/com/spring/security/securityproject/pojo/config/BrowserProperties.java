@@ -14,7 +14,7 @@ import lombok.Data;
 public class BrowserProperties {
 
     //指定一个默认跳转的页面，如果用户没有指定跳转页面
-    private String loginPage = "xxx.html";
+    private String loginPage = "index.html";
 
     private LoginType loginType = LoginType.JSON;
 

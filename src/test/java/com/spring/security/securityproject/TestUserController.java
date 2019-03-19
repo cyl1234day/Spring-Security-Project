@@ -1,5 +1,7 @@
 package com.spring.security.securityproject;
 
+import com.spring.security.securityproject.Enum.ValidateCodeType;
+import com.spring.security.securityproject.pojo.ValidateCode;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +67,16 @@ public class TestUserController {
         System.out.println(securityProperties.getBrowser().getLoginPage());
     }
 
+    @Test
+    public void test05() {
+        System.out.println(ValidateCodeType.SMS.getName());
+        System.out.println(ValidateCodeType.IMAGE.getName());
+    }
 
+    @Test
+    public void test06() {
+        System.out.println(ValidateCodeType.valueOf("SMS"));
+        System.out.println(ValidateCodeType.IMAGE);
+    }
 
 }

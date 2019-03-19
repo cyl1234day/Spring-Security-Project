@@ -1,5 +1,6 @@
 package com.spring.security.securityproject.service.validateCode;
 
+import com.spring.security.securityproject.exception.ValidateCodeException;
 import org.springframework.web.bind.ServletRequestBindingException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,6 @@ public interface ValidateCodeProcessor {
      * 验证校验码
      * @param request
      */
-    void validate(HttpServletRequest request) throws Exception;
+    void validate(HttpServletRequest request) throws ValidateCodeException;
 
 }

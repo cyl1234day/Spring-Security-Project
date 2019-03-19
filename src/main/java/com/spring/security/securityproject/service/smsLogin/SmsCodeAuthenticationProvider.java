@@ -1,5 +1,6 @@
 package com.spring.security.securityproject.service.smsLogin;
 
+import com.spring.security.securityproject.service.MyUserDetailServiceImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ public class SmsCodeAuthenticationProvider implements AuthenticationProvider {
     public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
+//    private MyUserDetailServiceImpl service = new MyUserDetailServiceImpl();
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

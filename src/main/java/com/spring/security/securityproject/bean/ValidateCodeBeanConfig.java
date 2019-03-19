@@ -1,4 +1,4 @@
-package com.spring.security.securityproject.config;
+package com.spring.security.securityproject.bean;
 
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import com.spring.security.securityproject.service.validateCode.MyImageCodeGenerator;

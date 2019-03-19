@@ -1,5 +1,6 @@
 package com.spring.security.securityproject.service.smsLogin;
 
+import com.spring.security.securityproject.constant.SecurityConstants;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -25,7 +26,7 @@ public class SmsAuthenticationFilter extends AbstractAuthenticationProcessingFil
     // =====================================================================================
     // *************************************************************************************
     //从这里获取登录请求的参数，从而判定给哪个Token
-    public static final String FORM_MOBILE_KEY = "mobile";
+    public static final String FORM_MOBILE_KEY = SecurityConstants.DEFAULT_PARAMETER_NAME_MOBILE;
 
     //请求中传递的参数名
     private String mobileParameter = FORM_MOBILE_KEY;
@@ -35,7 +36,7 @@ public class SmsAuthenticationFilter extends AbstractAuthenticationProcessingFil
     // ===================================================================================================
     // 设置要处理的URL和请求方式(前端表单提交的Action)
     public SmsAuthenticationFilter() {
-        super(new AntPathRequestMatcher("/authentication/sms", "POST"));
+        super(new AntPathRequestMatcher(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_SMS, "POST"));
     }
 
     // ~ Methods

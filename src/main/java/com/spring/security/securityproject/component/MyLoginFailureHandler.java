@@ -27,9 +27,9 @@ import java.io.PrintWriter;
 @Component("myLoginFailureHandler")
 public class MyLoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    public MyLoginFailureHandler() {
-        System.out.println("MyLoginFailureHandler 111111111111111111111111111111111");
-    }
+//    public MyLoginFailureHandler() {
+//        System.out.println("MyLoginFailureHandler 111111111111111111111111111111111");
+//    }
 
     @Autowired
     private SecurityProperties securityProperties;

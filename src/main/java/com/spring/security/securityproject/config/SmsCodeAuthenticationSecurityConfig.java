@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Component;
 
 /**
+ * 短信登录相关配置
  * 用来配置 SmsAuthenticationFilter 和 SmsCodeAuthenticationProvider
  * @author chengyl
  * @create 2019-03-18-16:16

@@ -37,5 +37,9 @@ public class UserController {
     }
 
 
+    @GetMapping("/ok")
+    public String asdlg222() {
+        return "<h1>OK</h1>";
+    }
 
 }

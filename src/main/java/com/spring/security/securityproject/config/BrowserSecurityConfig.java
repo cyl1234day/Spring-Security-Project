@@ -1,30 +1,32 @@
 package com.spring.security.securityproject.config;
 
-import com.spring.security.securityproject.filter.SmsCodeFilter;
+import com.spring.security.securityproject.constant.SecurityConstants;
 import com.spring.security.securityproject.filter.ValidateCodeFilter;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
 /**
+ * 用来配置 浏览器 相关的配置项
  * @author chengyl
- * @create 2019-03-16-13:16
+ * @create 2019-03-18-16:16
  */
-@Configuration
+@Component
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -36,13 +38,11 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationFailureHandler failureHandler;
     @Autowired
-    private ValidateCodeFilter validateCodeFilter;
-    @Autowired
-    private SmsCodeFilter smsCodeFilter;
-    @Autowired
     private DataSource dataSource;
     @Autowired
     private SmsCodeAuthenticationSecurityConfig smsConfig;
+    @Autowired
+    private ValidateCodeFilter validateCodeFilter;
 
 
 //    @Override
@@ -66,46 +66,28 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         return jdbcTokenRepository;
     }
 
-
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         //登录校验加密算法配置
         auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
-    }
-
-/*    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()//表单登录
-            .loginPage("")
-            .and()
-            .authorizeRequests()//需要授权
-            .anyRequest()//所有请求
-            .authenticated();//都要验证
-    }*/
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) throws Exception {
 
 //        如果ValidateCodeFilter没有声明为 @Component 则要手动创建
 //        ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
 //        validateCodeFilter.setFailureHandler(failureHandler);
 
-        //把自定义的验证码校验过滤器加到 UsernamePasswordAuthenticationFilter 之前
-        http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)//图形验证码校验过滤器
-            .addFilterBefore(smsCodeFilter, UsernamePasswordAuthenticationFilter.class)//短信验证码校验过滤器
-             .formLogin()//表单登录
+        http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+            .formLogin()//表单登录
             .successHandler(successHandler)//登录成功后的处理实现类
             .failureHandler(failureHandler)//登录失败后的处理实现类
-            .loginPage("/index.html")
-//            .loginPage("/login/authentication")//如果需要身份认证，跳转到url的Controller方法
-            .loginProcessingUrl("/authentication/form")//这个url的请求会传给过滤器进行用户校验
-//            .loginProcessingUrl("/authentication/sms")
+            .loginPage(SecurityConstants.DEFAULT_LOGIN_PAGE_URL)
+//          .loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)//如果需要身份认证，跳转到url的Controller方法
+            .loginProcessingUrl(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM)//这个url的请求会传给过滤器进行用户校验
+//          .loginProcessingUrl("/authentication/sms")
             .and()
             .rememberMe()//开始配置 RememberMe 功能
             .tokenRepository(persistentTokenRepository())//配置数据源
@@ -113,12 +95,13 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
             .userDetailsService(userDetailsService)//配置调用的UserDetails服务
             .and()
             .authorizeRequests()//需要授权登录
-            .antMatchers("/index.html", "/login/authentication", securityProperties.getBrowser().getLoginPage(),
-                        "/code/*", "/authentication/sms","/authentication/form").permitAll()//这个url的请求放行
+            .antMatchers(SecurityConstants.DEFAULT_LOGIN_PAGE_URL, SecurityConstants.DEFAULT_UNAUTHENTICATION_URL, securityProperties.getBrowser().getLoginPage(),
+                        "/code/*", SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_SMS, SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM).permitAll()//这个url的请求放行
             .anyRequest()//所有请求
             .authenticated()//都要身份认证
             .and()
             .csrf().disable()//关闭csrf
-            .apply(smsConfig);//加入SMS配置
+            .apply(smsConfig);//加入SMS登录配置
     }
 }
+

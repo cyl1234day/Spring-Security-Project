@@ -1,5 +1,6 @@
 package com.spring.security.securityproject.service.validateCode;
 
+import com.spring.security.securityproject.Enum.ValidateCodeType;
 import com.spring.security.securityproject.exception.ValidateCodeException;
 import com.spring.security.securityproject.pojo.ValidateCode;
 import org.apache.commons.lang3.StringUtils;
@@ -39,18 +40,20 @@ public abstract  class AbstractValidateCodeProcessor<C extends ValidateCode> imp
     public void validate(HttpServletRequest request) {
 
         //获取当前的类名
-        String prefix = StringUtils.substringBefore(this.getClass().getSimpleName(),"CodeProcessor");
-        String sessionName = SESSION_KEY_PREFIX + StringUtils.upperCase(prefix);
+//        String prefix = StringUtils.substringBefore(this.getClass().getSimpleName(),"CodeProcessor");
+        String sessionName = SESSION_KEY_PREFIX + getValidateCodeType().toString();
 
         ValidateCode sessionCode = (ValidateCode) request.getSession().getAttribute(sessionName);
 
         String imageCode = null;
         try {
-            imageCode = ServletRequestUtils.getRequiredStringParameter(request,"imageCode");
+            //前端输入的验证码
+            imageCode = ServletRequestUtils.getRequiredStringParameter(request, getValidateCodeType().getName());
         } catch (ServletRequestBindingException e) {
             throw new ValidateCodeException("获取验证码失败！");
         }
         if(sessionCode == null) {
+            //Session中正确的验证码
             throw new ValidateCodeException("验证码不存在！");
         }
         if(StringUtils.isEmpty(imageCode)) {
@@ -62,14 +65,26 @@ public abstract  class AbstractValidateCodeProcessor<C extends ValidateCode> imp
             throw new ValidateCodeException("验证码过期！");
         }
         if(!StringUtils.equalsIgnoreCase(sessionCode.getCode(), imageCode)) {
-            //要把错误的验证码从Session域中删掉
-//            request.getSession().removeAttribute(sessionName);
             throw new ValidateCodeException("验证码错误！");
         }
         //使用过的验证码从Session域中删掉
         request.getSession().removeAttribute(sessionName);
-
     }
+
+
+    /**
+     * 根据请求的 URI 获取验证类型
+     *
+     * 可以根据需求来具体变化：需要 SMS 或 IMAGE ，直接 toString
+     * 需要 smsCode 或 imageCode， 直接 getName()
+     * @return
+     */
+    private ValidateCodeType getValidateCodeType() {
+        //获取当前的类名
+        String type = StringUtils.substringBefore(this.getClass().getSimpleName(), "CodeProcessor");
+        return ValidateCodeType.valueOf(StringUtils.upperCase(type));
+    }
+
 
 
     /**
@@ -86,15 +101,16 @@ public abstract  class AbstractValidateCodeProcessor<C extends ValidateCode> imp
         }
         //根据请求不同，调用不同的 Generator 实现类
         ValidateCodeGenerator generator = null;
-        if(StringUtils.endsWith(uri, "sms")) {
-            generator = validateCodeGenerators.get("smsCodeGenerator");
-        } else {
-            generator = validateCodeGenerators.get("imageCodeGenerator");
-        }
+//        if(StringUtils.endsWith(uri, "sms")) {
+//            generator = validateCodeGenerators.get("smsCodeGenerator");
+//        } else {
+//            generator = validateCodeGenerators.get("imageCodeGenerator");
+//        }
+        generator = validateCodeGenerators.get(getValidateCodeType().getName() + "Generator");
+
         if (generator == null) {
             throw new ValidateCodeException("验证码生成器不存在");
         }
-
         return (C) generator.generateCode(request);
     }
 
@@ -106,8 +122,9 @@ public abstract  class AbstractValidateCodeProcessor<C extends ValidateCode> imp
      */
     private void save(HttpServletRequest request, ValidateCode validateCode) {
 
-        String prefix = StringUtils.substringBefore(this.getClass().getSimpleName(),"CodeProcessor");
-        String sessionName = SESSION_KEY_PREFIX + StringUtils.upperCase(prefix);
+//        String prefix = StringUtils.substringBefore(this.getClass().getSimpleName(),"CodeProcessor");
+        String type = getValidateCodeType().toString();
+        String sessionName = SESSION_KEY_PREFIX + StringUtils.upperCase(type);
 
         request.getSession().setAttribute(sessionName, validateCode);
     }
