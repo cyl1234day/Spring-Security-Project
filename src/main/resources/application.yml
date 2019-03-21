@@ -10,14 +10,23 @@ spring:
   session:
     store-type: none
 
+server:
+  servlet:
+    session:
+      timeout: 600
+
+
 imooc:
   security:
     browser:
       loginPage: /index.html
       loginType: JSON
+      session:
+        maximumSessions: 1
 #      remeberMeSeconds: 36000
 #    code:
 #      image:
 #        width: 200
 #        length: 6
+
 #        url: /user,/user/*

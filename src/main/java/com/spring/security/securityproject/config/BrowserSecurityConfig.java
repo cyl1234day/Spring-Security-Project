@@ -3,20 +3,21 @@ package com.spring.security.securityproject.config;
 import com.spring.security.securityproject.constant.SecurityConstants;
 import com.spring.security.securityproject.filter.ValidateCodeFilter;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
+import com.spring.security.securityproject.service.session.MyExpiredSessionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.InvalidSessionStrategy;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -43,6 +44,10 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     private SmsCodeAuthenticationSecurityConfig smsConfig;
     @Autowired
     private ValidateCodeFilter validateCodeFilter;
+    @Autowired
+    private SessionInformationExpiredStrategy expiredStrategy;
+    @Autowired
+    private InvalidSessionStrategy invalidStrategy;
 
 
 //    @Override
@@ -89,6 +94,14 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
             .loginProcessingUrl(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM)//这个url的请求会传给过滤器进行用户校验
 //          .loginProcessingUrl("/authentication/sms")
             .and()
+            .sessionManagement()//配置Session管理
+            .invalidSessionStrategy(invalidStrategy)
+//            .invalidSessionUrl(securityProperties.getBrowser().getSession().getInvalidSessionUrl())//session失效后跳转的URL
+            .maximumSessions(securityProperties.getBrowser().getSession().getMaximumSessions())//最多只允许有一个session
+            .maxSessionsPreventsLogin(securityProperties.getBrowser().getSession().isMaxSessionsPreventsLogin())//阻止后面的用户登录
+            .expiredSessionStrategy(expiredStrategy)//Session过期策略
+            .and()
+            .and()
             .rememberMe()//开始配置 RememberMe 功能
             .tokenRepository(persistentTokenRepository())//配置数据源
             .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())//配置有效时间
@@ -96,7 +109,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()//需要授权登录
             .antMatchers(SecurityConstants.DEFAULT_LOGIN_PAGE_URL, SecurityConstants.DEFAULT_UNAUTHENTICATION_URL, securityProperties.getBrowser().getLoginPage(),
-                        "/code/*", SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_SMS, SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM).permitAll()//这个url的请求放行
+                        "/code/*", SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_SMS, SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM,
+                        SecurityConstants.DEFAULT_SESSION_INVALID_URL).permitAll()//这个url的请求放行
             .anyRequest()//所有请求
             .authenticated()//都要身份认证
             .and()

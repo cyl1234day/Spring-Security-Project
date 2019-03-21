@@ -1,12 +1,16 @@
 package com.spring.security.securityproject.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.spring.security.securityproject.constant.SecurityConstants;
+import com.spring.security.securityproject.pojo.LoginResponse;
 import com.spring.security.securityproject.pojo.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +36,16 @@ public class UserController {
     }
 
     @GetMapping("/hello")
-    public String asdlg() {
+    public String asdlg(HttpServletRequest request) {
+        System.out.println("Session timeout:  " + request.getSession().getMaxInactiveInterval());
         return "hello";
     }
+
+//    @GetMapping(SecurityConstants.DEFAULT_SESSION_INVALID_URL)
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    public LoginResponse sessionInvalid() {
+//        return new LoginResponse("Session Invalid");
+//    }
 
 
     @GetMapping("/ok")
