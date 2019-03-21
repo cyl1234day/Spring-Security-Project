@@ -20,6 +20,7 @@ imooc:
   security:
     browser:
       loginPage: /index.html
+      logoutPage: /logout.html
       loginType: JSON
       session:
         maximumSessions: 1

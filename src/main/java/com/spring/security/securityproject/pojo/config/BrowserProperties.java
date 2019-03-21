@@ -16,6 +16,9 @@ public class BrowserProperties {
     //指定一个默认跳转的页面，如果用户没有指定跳转页面
     private String loginPage = "index.html";
 
+    //退出登录时的页面
+    private String logoutPage;
+
     private LoginType loginType = LoginType.JSON;
 
     private int rememberMeSeconds = 3600;

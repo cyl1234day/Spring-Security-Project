@@ -1,12 +1,14 @@
 package com.spring.security.securityproject.bean;
 
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
+import com.spring.security.securityproject.service.logout.MyLogoutSuccessHandler;
 import com.spring.security.securityproject.service.session.MyExpiredSessionStrategy;
 import com.spring.security.securityproject.service.session.MyInvalidSessionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
@@ -33,5 +35,15 @@ public class SessionBeanConfig {
     public MyInvalidSessionStrategy invalidSessionStrategy() {
         return new MyInvalidSessionStrategy(securityProperties.getBrowser().getSession().getInvalidSessionUrl());
     }
+
+
+    @Bean
+    @ConditionalOnMissingBean(LogoutSuccessHandler.class)
+    public LogoutSuccessHandler logoutSuccessHandler() {
+        MyLogoutSuccessHandler handler =  new MyLogoutSuccessHandler();
+        handler.setSecurityProperties(securityProperties);
+        return handler;
+    }
+
 
 }

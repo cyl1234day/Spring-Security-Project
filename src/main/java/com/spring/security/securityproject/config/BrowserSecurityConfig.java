@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.InvalidSessionStrategy;
@@ -48,6 +49,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     private SessionInformationExpiredStrategy expiredStrategy;
     @Autowired
     private InvalidSessionStrategy invalidStrategy;
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
 
 
 //    @Override
@@ -89,8 +92,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin()//表单登录
             .successHandler(successHandler)//登录成功后的处理实现类
             .failureHandler(failureHandler)//登录失败后的处理实现类
-            .loginPage(SecurityConstants.DEFAULT_LOGIN_PAGE_URL)
-//          .loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)//如果需要身份认证，跳转到url的Controller方法
+//            .loginPage(SecurityConstants.DEFAULT_LOGIN_PAGE_URL)
+          .loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)//如果需要身份认证，跳转到url的Controller方法
             .loginProcessingUrl(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM)//这个url的请求会传给过滤器进行用户校验
 //          .loginProcessingUrl("/authentication/sms")
             .and()
@@ -107,10 +110,15 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
             .tokenValiditySeconds(securityProperties.getBrowser().getRememberMeSeconds())//配置有效时间
             .userDetailsService(userDetailsService)//配置调用的UserDetails服务
             .and()
+            .logout()//退出登录相关配置
+            .logoutUrl("/checkout")//这个URL就表示退出，默认的是/logout，退出后跳转到登录页（loginPage）
+            .logoutSuccessHandler(logoutSuccessHandler)//成功退出处理器
+            .deleteCookies("JSESSIONID")//退出成功后要清除的cookie
+            .and()
             .authorizeRequests()//需要授权登录
             .antMatchers(SecurityConstants.DEFAULT_LOGIN_PAGE_URL, SecurityConstants.DEFAULT_UNAUTHENTICATION_URL, securityProperties.getBrowser().getLoginPage(),
                         "/code/*", SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_SMS, SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM,
-                        SecurityConstants.DEFAULT_SESSION_INVALID_URL).permitAll()//这个url的请求放行
+                        "/logout.html", SecurityConstants.DEFAULT_SESSION_INVALID_URL).permitAll()//这个url的请求放行
             .anyRequest()//所有请求
             .authenticated()//都要身份认证
             .and()
