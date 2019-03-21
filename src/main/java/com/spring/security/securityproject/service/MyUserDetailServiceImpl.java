@@ -30,7 +30,7 @@ public class MyUserDetailServiceImpl implements UserDetailsService {
          * 但是 spring security 版本在5.0后就要加个 PasswordEncoder
          * 即必须要对前端传过来的明文密码进行加密，加密后的密码和这里的密码一样就能登录成功
          */
-        return new User(mobile, "$2a$10$bcjr0XYCFsr0xyRrjhz28uf23gm.CF2mijWeNxyImqkqG19m.di/O", true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+        return new User(mobile, "$2a$10$bcjr0XYCFsr0xyRrjhz28uf23gm.CF2mijWeNxyImqkqG19m.di/O", true, true, true, true, AuthorityUtils.commaSeparatedStringToAuthorityList("admin, ROLE_USER"));
     }
 
 

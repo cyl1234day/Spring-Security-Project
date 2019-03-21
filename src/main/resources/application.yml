@@ -10,6 +10,12 @@ spring:
   session:
     store-type: none
 
+security:
+  oauth2:
+    client:
+      client-id: root
+      client-secret: root
+
 server:
   servlet:
     session:

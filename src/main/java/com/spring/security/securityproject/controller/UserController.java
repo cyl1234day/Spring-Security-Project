@@ -1,19 +1,15 @@
 package com.spring.security.securityproject.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.spring.security.securityproject.constant.SecurityConstants;
-import com.spring.security.securityproject.pojo.LoginResponse;
 import com.spring.security.securityproject.pojo.User;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author chengyl
@@ -51,6 +47,12 @@ public class UserController {
     @GetMapping("/ok")
     public String asdlg222() {
         return "<h1>OK</h1>";
+    }
+
+
+    @GetMapping("/me")
+    public UserDetails getMe(@AuthenticationPrincipal org.springframework.security.core.userdetails.User user) {
+        return user;
     }
 
 }
