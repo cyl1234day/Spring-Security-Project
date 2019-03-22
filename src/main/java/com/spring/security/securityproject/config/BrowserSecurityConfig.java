@@ -6,6 +6,7 @@ import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import com.spring.security.securityproject.service.session.MyExpiredSessionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -80,6 +81,11 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -95,12 +101,12 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 //        ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
 //        validateCodeFilter.setFailureHandler(failureHandler);
 
-        http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+        http//.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)//校验码
             .formLogin()//表单登录
             .successHandler(successHandler)//登录成功后的处理实现类
             .failureHandler(failureHandler)//登录失败后的处理实现类
-//            .loginPage(SecurityConstants.DEFAULT_LOGIN_PAGE_URL)
-          .loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)//如果需要身份认证，跳转到url的Controller方法
+            .loginPage(SecurityConstants.DEFAULT_LOGIN_PAGE_URL)
+//          .loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)//如果需要身份认证，跳转到url的Controller方法
             .loginProcessingUrl(SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_FORM)//这个url的请求会传给过滤器进行用户校验
 //          .loginProcessingUrl("/authentication/sms")
             .and()

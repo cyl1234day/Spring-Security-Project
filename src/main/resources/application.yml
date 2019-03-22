@@ -30,6 +30,15 @@ imooc:
       loginType: JSON
       session:
         maximumSessions: 1
+    oauth2:
+      clients[0]:
+        clientId: root
+        clientSecret: root
+        accessTokenValiditySeconds: 3600
+      clients[1]:
+        clientId: admin
+        clientSecret: admin
+
 #      remeberMeSeconds: 36000
 #    code:
 #      image:

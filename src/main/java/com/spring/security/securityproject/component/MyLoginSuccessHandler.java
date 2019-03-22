@@ -34,9 +34,6 @@ import java.util.Base64;
 public class MyLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Autowired
-    private SecurityProperties securityProperties;
-
-    @Autowired
     private ClientDetailsService clientDetailsService;
 
     @Autowired

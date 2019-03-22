@@ -2,6 +2,7 @@ package com.spring.security.securityproject.provider;
 
 import com.spring.security.securityproject.config.SmsCodeAuthenticationSecurityConfig;
 import com.spring.security.securityproject.constant.SecurityConstants;
+import com.spring.security.securityproject.filter.ValidateCodeFilter;
 import com.spring.security.securityproject.pojo.config.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * @author chengyl
@@ -27,10 +29,13 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     private AuthenticationFailureHandler failureHandler;
     @Autowired
     private SmsCodeAuthenticationSecurityConfig smsConfig;
+    @Autowired
+    private ValidateCodeFilter validateCodeFilter;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.formLogin()//表单登录
+        http//.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+            .formLogin()//表单登录
             .successHandler(successHandler)//登录成功后的处理实现类
             .failureHandler(failureHandler)//登录失败后的处理实现类
             .loginPage(SecurityConstants.DEFAULT_LOGIN_PAGE_URL)
